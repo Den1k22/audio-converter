@@ -22,7 +22,7 @@ def check_destination_folder(destination_folder):
     else:
         print(f"✅ Destination folder '{destination_folder}' is valid.")
 
-def convert_flac_to_mp3(source_folder, destination_folder):
+def convert_flac_to_mp3(source_folder, destination_folder, copy_existing=True):
     for filename in os.listdir(source_folder):
         if filename.lower().endswith(".flac"):
             flac_path = os.path.join(source_folder, filename)
@@ -36,6 +36,17 @@ def convert_flac_to_mp3(source_folder, destination_folder):
                 print("✅ Conversion successful.")
             except Exception as e:
                 print(f"❌ Error converting {filename}: {e}")
+        elif (copy_existing and filename.lower().endswith(".mp3")):
+            mp3_path = os.path.join(destination_folder, filename)
+            if not os.path.exists(mp3_path):
+                print(f"Copying existing MP3: {filename} to {destination_folder}")
+                try:
+                    os.rename(os.path.join(source_folder, filename), mp3_path)
+                    print("☑️ Copy successful.")
+                except Exception as e:
+                    print(f"❌ Error copying {filename}: {e}")
+        else:
+            print(f"⚠️ Skipping: {filename} (not a FLAC or MP3 file)")
 
 if __name__ == "__main__":
     source, destination = read_settings()
